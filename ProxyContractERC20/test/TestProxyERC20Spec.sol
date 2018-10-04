@@ -23,15 +23,17 @@ contract TestProxyERC20Spec {
 
     function testBalanceOf() public {
         proxy.redeem(20);
-        Assert.equal(40, proxy.balanceOf(msg.sender), "Single redeem call failed");
+        Assert.equal(40, proxy.balanceOf(msg.sender), "Single balanceOf call failed");
         
         proxy.redeem(30);
         proxy.redeem(1);
-        Assert.equal(102, proxy.balanceOf(msg.sender), "Multiple redeem calls failed");
+        Assert.equal(102, proxy.balanceOf(msg.sender), "Multiple balanceOf calls failed");
     }
 
-    function testTransfer() public {
-        proxy.redeem(20);
-        Assert.equal(40, proxy.balanceOf(msg.sender), "Single redeem call failed");
+    function testTotalSupply() public {
+        proxy.redeem(50);
+        proxy.redeem(30);
+        proxy.redeem(1);
+        Assert.equal(162, proxy.totalSupply(), "Multiple balanceOf calls failed");
     }
 }
