@@ -9,6 +9,8 @@ contract TestLogic2RealWorld {
 
     // Key Difference, we are using the deployed contracts address, not creating a new instance of the contract.
     Proxy proxy = Proxy(DeployedAddresses.Proxy());
+
+    // This line is unnecessary but included to show that Logic2 is deployed
     Logic2 logic2 = Logic2(DeployedAddresses.Logic2());
 
     function testRedeem() public {
