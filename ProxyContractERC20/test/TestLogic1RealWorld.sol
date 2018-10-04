@@ -13,10 +13,10 @@ contract TestLogic1RealWorld {
 
     function testRedeem() public {
         proxy.redeem(20);
-        Assert.equal(40, proxy.getBalance(), "Single redeem call failed");
+        Assert.equal(40, proxy.balanceOf(msg.sender), "Single redeem call failed");
         
         proxy.redeem(30);
         proxy.redeem(1);
-        Assert.equal(102, proxy.getBalance(), "Multiple redeem calls failed");
+        Assert.equal(102, proxy.balanceOf(msg.sender), "Multiple redeem calls failed");
     }
 }

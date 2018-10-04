@@ -9,6 +9,11 @@ contract Logic1 {
 
     ProxyInterface public proxyContract;
 
+    modifier onlyProxy() {
+        require(msg.sender == address(proxyContract), "This function can only be called by the proxy");
+        _;
+    }
+
     /**
      * @dev Creates the reference to the deployed proxy contract using the ProxyInterface
      *      and the passed in proxy address. Calls a function on the proxy contract to
@@ -25,7 +30,7 @@ contract Logic1 {
      *      passes this value back to the proxy contract for token minting.
      * @param theAmount The value to redeem.
      */
-    function redeem(uint256 theAmount) public {
+    function redeem(uint256 theAmount) public onlyProxy() {
 
         // Any conversion math or gathering data from oracles that
         // effects the conversion rate or amount to tokens goes here...

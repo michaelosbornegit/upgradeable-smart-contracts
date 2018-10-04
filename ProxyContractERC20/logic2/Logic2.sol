@@ -21,7 +21,7 @@ contract Logic2 is Logic1 {
      *      passes this value back to the proxy contract for token minting.
      * @param theAmount The value to redeem.
      */
-    function redeem(uint theAmount) public {
+    function redeem(uint theAmount) public onlyProxy() {
 
         // The key difference is we are multiplying theAmount by 10 now.
         uint tokensToAward = theAmount * 10;

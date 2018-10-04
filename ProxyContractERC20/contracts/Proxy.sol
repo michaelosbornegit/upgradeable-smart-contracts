@@ -9,7 +9,24 @@ import "./openzeppelin-solidity/ERC20.sol";
  */
 contract Proxy is ERC20 {
 
-    LogicInterface currentLogicContract;
+    LogicInterface internal currentLogicContract;
+    address internal deployer;
+
+    modifier onlyLogic() {
+        require(msg.sender == address(currentLogicContract), "Only the currently deployed logic contract can call this function");
+        _;
+    }
+
+    // This modifier makes sure only the deployer of the proxy contract
+    // can perform certain operations.
+    modifier onlyDeployer() {
+        require(tx.origin == deployer, "Only the account that deployed the proxy can call this function");
+        _;
+    }
+
+    constructor() public {
+        deployer = tx.origin;
+    }
 
     /**
      * @dev This function is called by the logic contract and updates this
@@ -17,7 +34,7 @@ contract Proxy is ERC20 {
      *      Whenever the logic contract is updated, this function must be called.
      * @param theLogicAddress The address of the new logic contract.
      */
-    function newLogicDeployed(address theLogicAddress) public {
+    function newLogicDeployed(address theLogicAddress) public onlyDeployer() {
         currentLogicContract = LogicInterface(theLogicAddress);
     }
 
@@ -37,21 +54,11 @@ contract Proxy is ERC20 {
      *      the logic contract calculated to the original caller.
      * @param theTokensToAward The amount to mint to the original caller.
      */
-    function redeemTokens(uint256 theTokensToAward) public {
+    function redeemTokens(uint256 theTokensToAward) public onlyLogic() {
         // tx.origin must be used here because msg.sender gets mutated when contracts
         // are called from contracts. We need to award the account that called redeem
         // in the first place.
         _mint(tx.origin, theTokensToAward);
-    }
-
-    /**
-     * @dev getBalance returns the callers token balance.
-     * @return The user's balance.
-     */
-    function getBalance() public view returns(uint256) {
-        // The use of tx.origin here is a possible security problem. This is done so 
-        // truffle tests work (with their redirected calls). Change to msg.sender for production. 
-        return balanceOf(tx.origin);
     }
 }
 
