@@ -5,7 +5,7 @@ import "truffle/DeployedAddresses.sol";
 import "../contracts/Proxy.sol";
 import "../contracts/Logic1.sol";
 
-contract TestProxyERC20Spec {
+contract TestProxyERC20 {
 
     // Proxy proxy = Proxy(DeployedAddresses.Proxy());
 
