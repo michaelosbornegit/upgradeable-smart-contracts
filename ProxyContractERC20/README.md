@@ -28,7 +28,7 @@ truffle compiles the contracts in `contracts/`, runs the migrations in `/migrati
 As you can see from inspecting `contracts/Logic1.sol` and `contracts/Proxy.sol`, all we are doing right now is taking a number in Proxy's `redeem` function, handing it off to Logic1's `redeem` and awarding the user the returned value in tokens. The logic contract is simply providing a conversion rate of amount to tokens.
 
 
-When we run the tests we get 3 successes, from `test/TestLogic1RealWorld`, `test/TestLogic1TestEnv`, and `test/TestProxyERC20. ***Why are there two test files for one contract?*** We will get more into that later, but the key difference is how we are creating the instances of each:
+When we run the tests we get 3 successes, from `test/TestLogic1RealWorld`, `test/TestLogic1TestEnv`, and `test/TestProxyERC20`. ***Why are there two test files for one contract?*** We will get more into that later, but the key difference is how we are creating the instances of each:
 ```solidity
 // TestLogic1RealWorld.sol
 // This simulates what it would actually be like in production on a real 
