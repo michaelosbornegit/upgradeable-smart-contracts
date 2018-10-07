@@ -61,7 +61,11 @@ Lets upgrade!
 2. Copy `logic2/TestLogic2RealWorld.sol` and `logic2/TestLogic2TestEnv.sol` to `test/`
 3. Copy `logic2/3_deploy_logic2.js` to `migrations/`
 
-run
+Either run
+```
+truffle test
+```
+again, or
 ```
 truffle develop
 ```
@@ -73,7 +77,7 @@ test
 Four tests pass, everything is working except for the one that didn't!! **You successfully upgraded a smart contract!** (if you don't believe me take a look at the files you added to `test/` that start with `Testlogic2...`.
   
   
-## But... its not all green checkies
+## But... I spy a red X
 I included this to show a risk (or feature 😊) of this approach to upgradeability, and this is ***critical*** so listen up.
 
 `TestLogic1RealWorld.sol` fails. [This is because all function calls in the EVM are virtual, which means that the most derived function is called, except when the contract name is explicitly given.](https://solidity.readthedocs.io/en/v0.4.24/contracts.html#inheritance) 
