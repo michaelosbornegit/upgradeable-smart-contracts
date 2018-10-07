@@ -18,7 +18,8 @@ contract TestProxyERC20Spec {
     // Create and deploy a new instance of Proxy and Logic1 before each test.
     function beforeEach() public {
         proxy = new Proxy();
-        logic1 = new Logic1(address(proxy));
+        logic1 = new Logic1();
+        proxy.updateLogicAddress(address(logic1));
     }
 
     function testBalanceOf() public {

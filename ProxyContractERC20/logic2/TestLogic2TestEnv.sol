@@ -13,15 +13,16 @@ contract TestLogic2TestEnv {
     // Create and deploy a new instance of Proxy and Logic2 before each test.
     function beforeEach() public {
         proxy = new Proxy();
-        logic2 = new Logic2(address(proxy));
+        logic2 = new Logic2();
+        proxy.updateLogicAddress(address(logic2));
     }
 
     function testRedeem() public {
         proxy.redeem(20);
-        Assert.equal(200, proxy.getBalance(), "Single redeem call failed");
+        Assert.equal(200, proxy.balanceOf(msg.sender), "Single redeem call failed");
         
         proxy.redeem(30);
         proxy.redeem(1);
-        Assert.equal(510, proxy.getBalance(), "Multiple redeem calls failed");
+        Assert.equal(510, proxy.balanceOf(msg.sender), "Multiple redeem calls failed");
     }
 }

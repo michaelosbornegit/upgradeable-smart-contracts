@@ -5,22 +5,23 @@ import "./openzeppelin-solidity/ERC20.sol";
 /**
  * @title Proxy
  * @dev This proxy contract delegates work to a logic contract which can be updated at
- *      any time and complies with ERC20 token guidelines.
+ *      any time. This contract also has ERC20 functionality through extending OpenZeppelin's
+ *      popular ERC20 contract.
+ *
+ *      NOTE: This contract exclusively uses tx.origin instead of msg.sender to work with
+ *            Truffles testing and deployment environment. These should be changed to
+ *            msg.sender for production.
  */
 contract Proxy is ERC20 {
 
     LogicInterface internal currentLogicContract;
     address internal deployer;
 
-    modifier onlyLogic() {
-        require(msg.sender == address(currentLogicContract), "Only the currently deployed logic contract can call this function");
-        _;
-    }
-
-    // This modifier makes sure only the deployer of the proxy contract
-    // can perform certain operations.
+    /**
+     * @dev Restricts functions to the deployer of the contract.
+     */
     modifier onlyDeployer() {
-        require(tx.origin == deployer, "Only the account that deployed the proxy can call this function");
+        require(tx.origin == deployer, "This function is restricted to the deployer of the contract.");
         _;
     }
 
@@ -29,36 +30,19 @@ contract Proxy is ERC20 {
     }
 
     /**
-     * @dev This function is called by the logic contract and updates this
-     *      contracts reference to the currently deployed logic contract.
-     *      Whenever the logic contract is updated, this function must be called.
-     * @param theLogicAddress The address of the new logic contract.
+     * @dev Updates this contracts logic contract reference to a new logic contract.
+     * @param newLogicAddress The address of the new logic contract.
      */
-    function newLogicDeployed(address theLogicAddress) public onlyDeployer() {
-        currentLogicContract = LogicInterface(theLogicAddress);
+    function updateLogicAddress(address newLogicAddress) public onlyDeployer() {
+        currentLogicContract = LogicInterface(newLogicAddress);
     }
 
     /**
-     * @dev This is the money function. We delegate the work of figuring out how much
-     *      tokens the theAmount parameter is worth to the logic contract. For example,
-     *      theAmount could be how many hours you worked/volunteered (which you then
-     *      get awarded tokens for).
+     * @dev Mints the amount of coins calculated by the logic contract to tx.origin
      * @param theAmount The theAmount (of something) to redeem.
      */
     function redeem(uint256 theAmount) public {
-        currentLogicContract.redeem(theAmount);
-    }
-
-    /**
-     * @dev This function is called by the logic contract. Mints the amount of tokens
-     *      the logic contract calculated to the original caller.
-     * @param theTokensToAward The amount to mint to the original caller.
-     */
-    function redeemTokens(uint256 theTokensToAward) public onlyLogic() {
-        // tx.origin must be used here because msg.sender gets mutated when contracts
-        // are called from contracts. We need to award the account that called redeem
-        // in the first place.
-        _mint(tx.origin, theTokensToAward);
+        _mint(tx.origin, currentLogicContract.redeem(theAmount));
     }
 }
 
@@ -72,5 +56,5 @@ contract Proxy is ERC20 {
  *      NOTE: Newer versions of logic contracts must always have this function.
  */
 contract LogicInterface {
-    function redeem(uint theAmount) external;
+    function redeem(uint theAmount) external returns(uint256);
 }
